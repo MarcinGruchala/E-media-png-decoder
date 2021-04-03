@@ -3,7 +3,6 @@ import struct
 import zlib
 
 def read_chunk(file):
-   # Returns (chunk_type, chunk_data)
     chunkLength, chunkType = struct.unpack('>I4s', file.read(8))
     chunkData = file.read(chunkLength)
     checksum = zlib.crc32(chunkData, zlib.crc32(struct.pack('>4s', chunkType)))
@@ -25,7 +24,7 @@ else:
         chunks.append((chunkType, chunkData))
         if chunkType == b'IEND':
             break
- 
+
     print([chunkType for chunkType, chunkData in chunks])
 
     IHDR = chunks[0][1]
@@ -37,6 +36,3 @@ else:
     print(f'Compression Method: {compressionMethod}\nFilter Method: {filterMethod}')
     print(f'Interlace Method: {interlaceMethod}')
 
-    
-
-   

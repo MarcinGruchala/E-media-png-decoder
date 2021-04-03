@@ -1,55 +1,50 @@
-import sys 
-import cv2 as cv
-import png 
+import sys
+import struct
+import zlib
 
 class Decoder:
-    def __init__(self, filePath):
-        self.img = png.Reader(filePath)
-        self.width = None
-        self.height = None
-        self.bitDepth = None
-        self.colorType = None
-        self.compressionMethod = None
-        self.interlaceMethod = None
-
-    def getColorType(self,metadata):
-        colorType = '' 
-        if(metadata['greyscale']):
-            colorType += 'greyscala'
-        else:
-            colorType += 'RGB'
-        if(metadata['alpha']):
-            colorType += ' + alpha sample'
-        return colorType
+    PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
+    # def __init__(self, filePath):
+    #     self.img = png.Reader(filePath)
 
 
-        
-        
-    def IHDRChunk(self):
-        data = self.img.read()
-        print(data)
-        self.width = data[0]
-        self.height = data[1]
-        self.bitDepth = data[3]['bitdepth']
-        self.colorType = self.getColorType(data[3])
-        self.interlaceMethod = data[3]['interlace']
-        
-
-    def printData(self):
-        print(f'IHDR Chunk:\n   Width: {self.width}\n   Height: {self.height}\n   Bit Depth: {self.bitDepth}\n   Color type: {self.colorType}')
-        print(f'   Interlace: {self.interlaceMethod}')
+def read_chunk(file):
+    chunkLength, chunkType = struct.unpack('>I4s', file.read(8))
+    chunkData = file.read(chunkLength)
+    checksum = zlib.crc32(chunkData, zlib.crc32(struct.pack('>4s', chunkType)))
+    chunk_crc, = struct.unpack('>I', file.read(4))
+    if chunk_crc != checksum:
+        raise Exception('chunk checksum failed {} != {}'.format(chunk_crc,
+            checksum))
+    return chunkType, chunkData
 
 
 
 def main():
-    png = Decoder(sys.argv[1])
-    png.IHDRChunk()
-    # png.printData()
-    print(png.img.chunk())
+    imageFile = open(sys.argv[1], 'rb')
+    if(imageFile.read(len(Decoder.PNG_SIGNATURE)) != Decoder.PNG_SIGNATURE):
+        print('Is is not a png file ')
+    else:
+        chunks = []
+        while True:
+            chunkType, chunkData = read_chunk(imageFile)
+            chunks.append((chunkType, chunkData))
+            if chunkType == b'IEND':
+                break
+
+        print([chunkType for chunkType, chunkData in chunks])
+
+        IHDR = chunks[0][1]
+        width, height, bitDepth, colorType, compressionMethod, filterMethod, interlaceMethod = struct.unpack('>IIBBBBB', IHDR)
+
+        print(f'\n{chunks[0][0]}')
+        print(f'Width: {width}\nHeight: {height}\nBit Depth: {bitDepth}\nColor type: {colorType}')
+        print(f'Compression Method: {compressionMethod}\nFilter Method: {filterMethod}')
+        print(f'Interlace Method: {interlaceMethod}')
+
 
 
 
 if __name__ == '__main__':
     main()
 
-    
