@@ -9,7 +9,7 @@ def main():
         png = Decoder(imageFile)
         png.printChunks()
         png.readIHDR()
-        png.ihdr.printNice()
+        png.printMetedata()
 
 if __name__ == '__main__':
     main()

@@ -30,3 +30,6 @@ class Decoder:
 
     def printChunks(self):
         print([chunkType for chunkType, chunkData in self.chunks])
+
+    def printMetedata(self):
+        self.ihdr.printInformations()
