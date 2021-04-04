@@ -30,7 +30,21 @@ class Decoder:
 
     def readIDAT(self):
         idatData = b''.join(chunk_data for chunk_type, chunk_data in self.chunks if chunk_type == b'IDAT')
-        self.idat = IDAT(idatData,self.ihdr.width,self.ihdr.height)
+        self.idat = IDAT(idatData,self.getBytesPerPixel(),self.ihdr.width,self.ihdr.height)
+
+    def getBytesPerPixel(self):
+        if(self.ihdr.colorType == 0):
+            return 1
+        elif(self.ihdr.colorType == 2):
+            return 3
+        elif(self.ihdr.colorType == 3):
+            return -1
+        elif(self.ihdr.colorType == 4):
+            return 2
+        elif(self.ihdr.colorType == 6):
+            return 4
+        else:
+            return -1
 
     def printChunks(self):
         print([chunkType for chunkType, chunkData in self.chunks])

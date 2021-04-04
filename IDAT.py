@@ -2,10 +2,10 @@ import zlib
 import matplotlib.pyplot as plt
 import numpy as np
 class IDAT:
-    def __init__(self, idatData,width,height):
+    def __init__(self, idatData,bytesPerPixel,width,height):
         self.idatData = zlib.decompress(idatData)
         self.recon = []
-        self.bytesPerPixel = 4
+        self.bytesPerPixel = bytesPerPixel
         self.width = width
         self.height = height
         self.stride = width * self.bytesPerPixel
@@ -55,5 +55,5 @@ class IDAT:
                 self.recon.append(Recon_x & 0xff) # truncation to byte
 
     def show(self):
-        plt.imshow(np.array(self.recon).reshape((self.height, self.width, 4)))
+        plt.imshow(np.array(self.recon).reshape((self.height, self.width, self.bytesPerPixel)))
         plt.show()
