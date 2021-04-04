@@ -10,6 +10,8 @@ def main():
         png.printChunks()
         png.readIHDR()
         png.printMetedata()
+        png.readIDAT()
+        png.showIDAT()
 
 if __name__ == '__main__':
     main()
