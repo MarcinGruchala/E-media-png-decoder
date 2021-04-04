@@ -1,6 +1,7 @@
 # import sys
 import zlib
 from IHDR import IHDR, struct
+from IDAT import IDAT
 
 def read_chunk(file):
     chunkLength, chunkType = struct.unpack('>I4s', file.read(8))
@@ -29,11 +30,15 @@ class Decoder:
 
     def readIDAT(self):
         idatData = b''.join(chunk_data for chunk_type, chunk_data in self.chunks if chunk_type == b'IDAT')
-        self.idat = zlib.decompress(idatData)
-        print(len(self.idat))
+        self.idat = IDAT(idatData,self.ihdr.width,self.ihdr.height)
 
     def printChunks(self):
         print([chunkType for chunkType, chunkData in self.chunks])
 
     def printMetedata(self):
         self.ihdr.printInformations()
+
+    def showIDAT(self):
+        self.idat.reconstructsPixelData()
+        self.idat.show()
+
