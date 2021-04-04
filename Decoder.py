@@ -27,6 +27,10 @@ class Decoder:
     def readIHDR(self):
         self.ihdr = IHDR(self.chunks[0][1])
 
+    def readIDAT(self):
+        idatData = b''.join(chunk_data for chunk_type, chunk_data in self.chunks if chunk_type == b'IDAT')
+        self.idat = zlib.decompress(idatData)
+        print(len(self.idat))
 
     def printChunks(self):
         print([chunkType for chunkType, chunkData in self.chunks])
