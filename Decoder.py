@@ -1,5 +1,7 @@
-# import sys
 import zlib
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 from IHDR import IHDR, struct
 from IDAT import IDAT
 
@@ -16,8 +18,9 @@ def read_chunk(file):
 class Decoder:
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
 
-    def __init__(self, image):
+    def __init__(self, image,cvImg):
         self.img = image
+        self.cvImg = cvImg
         self.chunks = []
         while True:
             chunkType, chunkData = read_chunk(self.img)
@@ -55,4 +58,10 @@ class Decoder:
     def showIDAT(self):
         self.idat.reconstructsPixelData()
         self.idat.show()
+
+    def showFFT(self):
+        # plt.imshow(self.cvImg,cmap='gray',vmin=0,vmax=255)
+        fft = np.fft.fft2(self.cvImg)
+        plt.imshow(np.log(1+np.abs(fft)), "gray")
+        plt.show()
 
