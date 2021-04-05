@@ -1,5 +1,7 @@
-# import sys
 import zlib
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 from IHDR import IHDR, struct
 from IDAT import IDAT
 
@@ -16,8 +18,9 @@ def read_chunk(file):
 class Decoder:
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
 
-    def __init__(self, image):
+    def __init__(self, image,cvImg):
         self.img = image
+        self.cvImg = cvImg
         self.chunks = []
         while True:
             chunkType, chunkData = read_chunk(self.img)
@@ -38,7 +41,7 @@ class Decoder:
         elif(self.ihdr.colorType == 2):
             return 3
         elif(self.ihdr.colorType == 3):
-            return -1
+            return 1
         elif(self.ihdr.colorType == 4):
             return 2
         elif(self.ihdr.colorType == 6):
@@ -55,4 +58,16 @@ class Decoder:
     def showIDAT(self):
         self.idat.reconstructsPixelData()
         self.idat.show()
+
+    def showFFT(self):
+        beforFFT = self.cvImg
+        fft = np.fft.fft2(self.cvImg)
+        fftCentered = np.fft.fftshift(fft)
+        fftDecentered = np.fft.ifftshift(fftCentered)
+        invertFFt = np.fft.ifft2(fftDecentered)
+        plt.subplot(221), plt.imshow(beforFFT, 'gray'), plt.title("Orgiinal Image in grayscale")
+        plt.subplot(222), plt.imshow(np.log(1+np.abs(fft)), "gray"), plt.title("Spectrum")
+        plt.subplot(223), plt.imshow(np.log(1+np.abs(fftCentered)), "gray"), plt.title("Centered Spectrum")
+        plt.subplot(224), plt.imshow(np.abs(invertFFt), "gray"), plt.title("Image after iverse FFT")
+        plt.show()
 

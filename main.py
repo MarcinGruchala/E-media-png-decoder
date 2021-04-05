@@ -1,4 +1,5 @@
 import sys
+import cv2
 from Decoder import Decoder
 
 def main():
@@ -6,12 +7,15 @@ def main():
     if(imageFile.read(len(Decoder.PNG_SIGNATURE)) != Decoder.PNG_SIGNATURE):
         print('Is is not a png file ')
     else:
-        png = Decoder(imageFile)
+        cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
+
+        png = Decoder(imageFile,cvImg)
         png.printChunks()
         png.readIHDR()
         png.printMetedata()
         png.readIDAT()
-        png.showIDAT()
+        # png.showIDAT()
+        png.showFFT()
 
 if __name__ == '__main__':
     main()
