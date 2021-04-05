@@ -12,6 +12,7 @@ def main():
         png = Decoder(imageFile,cvImg)
         # png.printChunks()
         png.printMetedata()
+        png.showPixelData()
 
 
         # png.readIHDR()

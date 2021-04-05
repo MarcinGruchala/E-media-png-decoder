@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 class IDAT:
     def __init__(self, idatData,bytesPerPixel,width,height):
-        self.decompressedIDATData = zlib.decompress(idatData)
-        self.recon = []
+        self.decompressedData = zlib.decompress(idatData)
+        self.reconstructedPixelData = []
         self.bytesPerPixel = bytesPerPixel
         self.width = width
         self.height = height
@@ -23,39 +23,39 @@ class IDAT:
             Pr = c
         return Pr
 
-    def recon_a(self, r, c):
-        return self.recon[r * self.stride + c - self.bytesPerPixel] if c >= self.bytesPerPixel else 0
+    def reconstructedPixelData_a(self, r, c):
+        return self.reconstructedPixelData[r * self.stride + c - self.bytesPerPixel] if c >= self.bytesPerPixel else 0
 
-    def recon_b(self, r, c):
-        return self.recon[(r-1) * self.stride + c] if r > 0 else 0
+    def reconstructedPixelData_b(self, r, c):
+        return self.reconstructedPixelData[(r-1) * self.stride + c] if r > 0 else 0
 
-    def recon_c(self, r, c):
-        return self.recon[(r-1) * self.stride + c - self.bytesPerPixel] if r > 0 and c >= self.bytesPerPixel else 0
+    def reconstructedPixelData_c(self, r, c):
+        return self.reconstructedPixelData[(r-1) * self.stride + c - self.bytesPerPixel] if r > 0 and c >= self.bytesPerPixel else 0
 
     def reconstructsPixelData(self):
         i = 0
         for r in range(self.height): # for each scanline
-            filter_type = self.decompressedIDATData[i] # first byte of scanline is filter type
+            filter_type = self.decompressedData[i] # first byte of scanline is filter type
             i += 1
             for c in range(self.stride): # for each byte in scanline
-                Filt_x = self.decompressedIDATData[i]
+                Filt_x = self.decompressedData[i]
                 i += 1
                 if filter_type == 0: # None
-                    Recon_x = Filt_x
+                    reconstructedPixelData_x = Filt_x
                 elif filter_type == 1: # Sub
-                    Recon_x = Filt_x + self.recon_a(r, c)
+                    reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_a(r, c)
                 elif filter_type == 2: # Up
-                    Recon_x = Filt_x + self.recon_b(r, c)
+                    reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_b(r, c)
                 elif filter_type == 3: # Average
-                    Recon_x = Filt_x + (self.recon_a(r, c) + self.recon_b(r, c)) // 2
+                    reconstructedPixelData_x = Filt_x + (self.reconstructedPixelData_a(r, c) + self.reconstructedPixelData_b(r, c)) // 2
                 elif filter_type == 4: # Paeth
-                    Recon_x = Filt_x + self.paethPredictor(self.recon_a(r, c), self.recon_b(r, c), self.recon_c(r, c))
+                    reconstructedPixelData_x = Filt_x + self.paethPredictor(self.reconstructedPixelData_a(r, c), self.reconstructedPixelData_b(r, c), self.reconstructedPixelData_c(r, c))
                 else:
                     raise Exception('unknown filter type: ' + str(filter_type))
-                self.recon.append(Recon_x & 0xff) # truncation to byte
+                self.reconstructedPixelData.append(reconstructedPixelData_x & 0xff) # truncation to byte
 
     def show(self):
-        plt.imshow(np.array(self.recon).reshape((self.height, self.width, self.bytesPerPixel)))
+        plt.imshow(np.array(self.reconstructedPixelData).reshape((self.height, self.width, self.bytesPerPixel)))
         plt.show()
 
 

@@ -30,6 +30,10 @@ class Decoder:
         self.IHDR = self.readIHDR()
         self.IDAT = self.readIDAT()
         self.bytesPerPixel = self.getBytesPerPixel()
+        self.stride = self.IHDR.width * self.bytesPerPixel
+        self.reconstructedPixelData = []
+        self.reconstructsPixelData()
+
 
     def readIHDR(self):
         return IHDR(self.chunks[0][1])
@@ -39,18 +43,12 @@ class Decoder:
         return IDAT(idatData,self.getBytesPerPixel(),self.IHDR.width,self.IHDR.height)
 
     def getBytesPerPixel(self):
-        if(self.IHDR.colorType == 0):
-            return 1
-        elif(self.IHDR.colorType == 2):
-            return 3
-        elif(self.IHDR.colorType == 3):
-            return 1
-        elif(self.IHDR.colorType == 4):
-            return 2
-        elif(self.IHDR.colorType == 6):
-            return 4
-        else:
-            return -1
+        if(self.IHDR.colorType == 0): return 1
+        elif(self.IHDR.colorType == 2): return 3
+        elif(self.IHDR.colorType == 3): return 1
+        elif(self.IHDR.colorType == 4): return 2
+        elif(self.IHDR.colorType == 6): return 4
+        else: return -1
 
     def printChunks(self):
         print([chunkType for chunkType, chunkData in self.chunks])
@@ -77,4 +75,53 @@ class Decoder:
         plt.subplot(223), plt.imshow(np.log(1+np.abs(fftCentered)), "gray"), plt.title("Centered Spectrum")
         plt.subplot(224), plt.imshow(np.abs(invertFFt), "gray"), plt.title("Image after iverse FFT")
         plt.show()
+
+    def showPixelData(self):
+        plt.imshow(np.array(self.reconstructedPixelData).reshape((self.IHDR.height, self.IHDR.width, self.bytesPerPixel)))
+        plt.show()
+
+    def paethPredictor(self,a, b, c):
+        p = a + b - c
+        pa = abs(p - a)
+        pb = abs(p - b)
+        pc = abs(p - c)
+        if pa <= pb and pa <= pc:
+            Pr = a
+        elif pb <= pc:
+            Pr = b
+        else:
+            Pr = c
+        return Pr
+
+    def reconstructedPixelData_a(self, r, c):
+        return self.reconstructedPixelData[r * self.stride + c - self.bytesPerPixel] if c >= self.bytesPerPixel else 0
+
+    def reconstructedPixelData_b(self, r, c):
+        return self.reconstructedPixelData[(r-1) * self.stride + c] if r > 0 else 0
+
+    def reconstructedPixelData_c(self, r, c):
+        return self.reconstructedPixelData[(r-1) * self.stride + c - self.bytesPerPixel] if r > 0 and c >= self.bytesPerPixel else 0
+
+
+    def reconstructsPixelData(self):
+        i = 0
+        for r in range(self.IHDR.height): # for each scanline
+            filter_type = self.IDAT.decompressedData[i] # first byte of scanline is filter type
+            i += 1
+            for c in range(self.stride): # for each byte in scanline
+                Filt_x = self.IDAT.decompressedData[i]
+                i += 1
+                if filter_type == 0: # None
+                    reconstructedPixelData_x = Filt_x
+                elif filter_type == 1: # Sub
+                    reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_a(r, c)
+                elif filter_type == 2: # Up
+                    reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_b(r, c)
+                elif filter_type == 3: # Average
+                    reconstructedPixelData_x = Filt_x + (self.reconstructedPixelData_a(r, c) + self.reconstructedPixelData_b(r, c)) // 2
+                elif filter_type == 4: # Paeth
+                    reconstructedPixelData_x = Filt_x + self.paethPredictor(self.reconstructedPixelData_a(r, c), self.reconstructedPixelData_b(r, c), self.reconstructedPixelData_c(r, c))
+                else:
+                    raise Exception('unknown filter type: ' + str(filter_type))
+                self.reconstructedPixelData.append(reconstructedPixelData_x & 0xff) # truncation to byte
 
