@@ -27,24 +27,27 @@ class Decoder:
             self.chunks.append((chunkType, chunkData))
             if chunkType == b'IEND':
                 break
+        self.IHDR = self.readIHDR()
+        self.IDAT = self.readIDAT()
+        self.bytesPerPixel = self.getBytesPerPixel()
 
     def readIHDR(self):
-        self.ihdr = IHDR(self.chunks[0][1])
+        return IHDR(self.chunks[0][1])
 
     def readIDAT(self):
         idatData = b''.join(chunk_data for chunk_type, chunk_data in self.chunks if chunk_type == b'IDAT')
-        self.idat = IDAT(idatData,self.getBytesPerPixel(),self.ihdr.width,self.ihdr.height)
+        return IDAT(idatData,self.getBytesPerPixel(),self.IHDR.width,self.IHDR.height)
 
     def getBytesPerPixel(self):
-        if(self.ihdr.colorType == 0):
+        if(self.IHDR.colorType == 0):
             return 1
-        elif(self.ihdr.colorType == 2):
+        elif(self.IHDR.colorType == 2):
             return 3
-        elif(self.ihdr.colorType == 3):
+        elif(self.IHDR.colorType == 3):
             return 1
-        elif(self.ihdr.colorType == 4):
+        elif(self.IHDR.colorType == 4):
             return 2
-        elif(self.ihdr.colorType == 6):
+        elif(self.IHDR.colorType == 6):
             return 4
         else:
             return -1
@@ -53,11 +56,15 @@ class Decoder:
         print([chunkType for chunkType, chunkData in self.chunks])
 
     def printMetedata(self):
-        self.ihdr.printInformations()
+        print("Chunks: ")
+        self.printChunks()
+        print("\nImage atributes: ")
+        self.IHDR.printInformations()
+        print(f'Bytes per pixel: {self.bytesPerPixel}')
 
     def showIDAT(self):
-        self.idat.reconstructsPixelData()
-        self.idat.show()
+        self.IDAT.reconstructsPixelData()
+        self.IDAT.show()
 
     def showFFT(self):
         beforFFT = self.cvImg

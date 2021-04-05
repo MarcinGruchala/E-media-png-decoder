@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 class IDAT:
     def __init__(self, idatData,bytesPerPixel,width,height):
-        self.idatData = zlib.decompress(idatData)
+        self.decompressedIDATData = zlib.decompress(idatData)
         self.recon = []
         self.bytesPerPixel = bytesPerPixel
         self.width = width
@@ -35,10 +35,10 @@ class IDAT:
     def reconstructsPixelData(self):
         i = 0
         for r in range(self.height): # for each scanline
-            filter_type = self.idatData[i] # first byte of scanline is filter type
+            filter_type = self.decompressedIDATData[i] # first byte of scanline is filter type
             i += 1
             for c in range(self.stride): # for each byte in scanline
-                Filt_x = self.idatData[i]
+                Filt_x = self.decompressedIDATData[i]
                 i += 1
                 if filter_type == 0: # None
                     Recon_x = Filt_x
@@ -57,3 +57,5 @@ class IDAT:
     def show(self):
         plt.imshow(np.array(self.recon).reshape((self.height, self.width, self.bytesPerPixel)))
         plt.show()
+
+

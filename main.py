@@ -10,12 +10,16 @@ def main():
         cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
 
         png = Decoder(imageFile,cvImg)
-        png.printChunks()
-        png.readIHDR()
+        # png.printChunks()
         png.printMetedata()
-        png.readIDAT()
+
+
+        # png.readIHDR()
+        # png.printMetedata()
+        # png.readIDAT()
         # png.showIDAT()
-        png.showFFT()
+        # png.showFFT()
+
 
 if __name__ == '__main__':
     main()
