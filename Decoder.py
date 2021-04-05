@@ -41,7 +41,7 @@ class Decoder:
         elif(self.ihdr.colorType == 2):
             return 3
         elif(self.ihdr.colorType == 3):
-            return -1
+            return 1
         elif(self.ihdr.colorType == 4):
             return 2
         elif(self.ihdr.colorType == 6):
@@ -60,8 +60,14 @@ class Decoder:
         self.idat.show()
 
     def showFFT(self):
-        # plt.imshow(self.cvImg,cmap='gray',vmin=0,vmax=255)
+        beforFFT = self.cvImg
         fft = np.fft.fft2(self.cvImg)
-        plt.imshow(np.log(1+np.abs(fft)), "gray")
+        fftCentered = np.fft.fftshift(fft)
+        fftDecentered = np.fft.ifftshift(fftCentered)
+        invertFFt = np.fft.ifft2(fftDecentered)
+        plt.subplot(221), plt.imshow(beforFFT, 'gray'), plt.title("Orgiinal Image in grayscale")
+        plt.subplot(222), plt.imshow(np.log(1+np.abs(fft)), "gray"), plt.title("Spectrum")
+        plt.subplot(223), plt.imshow(np.log(1+np.abs(fftCentered)), "gray"), plt.title("Centered Spectrum")
+        plt.subplot(224), plt.imshow(np.abs(invertFFt), "gray"), plt.title("Image after iverse FFT")
         plt.show()
 
