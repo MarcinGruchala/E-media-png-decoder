@@ -17,6 +17,7 @@ def read_chunk(file):
 
 class Decoder:
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
+    CRITICAL_CHUNKS = [b'IHDR',b'PLTE',b'IDAT',b'IEND']
 
     def __init__(self, image,cvImg):
         self.img = image
@@ -119,4 +120,14 @@ class Decoder:
                 else:
                     raise Exception('unknown filter type: ' + str(filter_type))
                 self.reconstructedPixelData.append(reconstructedPixelData_x & 0xff) # truncation to byte
+
+    def createImageFromCriticalChunks(self):
+        fileName = "newPNGImage.png"
+        newFile = open(fileName, 'wb')
+        newFile.write(Decoder.PNG_SIGNATURE)
+        for chunkType, chunkData in self.chunks:
+            if chunkType in Decoder.CRITICAL_CHUNKS:
+                newFile.write(chunkType)
+                newFile.write(chunkData)
+        newFile.close()
 

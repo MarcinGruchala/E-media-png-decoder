@@ -15,6 +15,8 @@ def main():
                 png.showFFT()
             if(sys.argv[2] == 'PIXELS'):
                 png.showPixelData()
+            if(sys.argv[2] == 'NI'):
+                png.createImageFromCriticalChunks()
 
 if __name__ == '__main__':
     main()
