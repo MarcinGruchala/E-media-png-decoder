@@ -4,16 +4,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from IHDR import IHDR, struct
 from IDAT import IDAT
+from Chunk import Chunk
 
 def read_chunk(file):
     chunkLength, chunkType = struct.unpack('>I4s', file.read(8))
     chunkData = file.read(chunkLength)
     checksum = zlib.crc32(chunkData, zlib.crc32(struct.pack('>4s', chunkType)))
-    chunk_crc, = struct.unpack('>I', file.read(4))
-    if chunk_crc != checksum:
-        raise Exception('chunk checksum failed {} != {}'.format(chunk_crc,
+    chunkCrc, = struct.unpack('>I', file.read(4))
+    if chunkCrc != checksum:
+        raise Exception('chunk checksum failed {} != {}'.format(chunkCrc,
             checksum))
-    return chunkType, chunkData
+    return Chunk(chunkLength,chunkType,chunkData,chunkCrc)
 
 class Decoder:
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
@@ -24,9 +25,9 @@ class Decoder:
         self.cvImg = cvImg
         self.chunks = []
         while True:
-            chunkType, chunkData = read_chunk(self.img)
-            self.chunks.append((chunkType, chunkData))
-            if chunkType == b'IEND':
+            chunk = read_chunk(self.img)
+            self.chunks.append(chunk)
+            if chunk.type == b'IEND':
                 break
         self.IHDR = self.readIHDR()
         self.IDAT = self.readIDAT()
@@ -37,10 +38,10 @@ class Decoder:
 
 
     def readIHDR(self):
-        return IHDR(self.chunks[0][1])
+        return IHDR(self.chunks[0].data)
 
     def readIDAT(self):
-        idatData = b''.join(chunk_data for chunk_type, chunk_data in self.chunks if chunk_type == b'IDAT')
+        idatData = b''.join(chunk.data for chunk in self.chunks if chunk.type == b'IDAT')
         return IDAT(idatData)
 
     def getBytesPerPixel(self):
@@ -52,7 +53,7 @@ class Decoder:
         else: return -1
 
     def printChunks(self):
-        print([chunkType for chunkType, chunkData in self.chunks])
+        print([chunk.type for chunk in self.chunks])
 
     def printMetedata(self):
         print("Chunks: ")
