@@ -2,6 +2,7 @@ import zlib
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
 from IHDR import IHDR, struct
 from IDAT import IDAT
 from Chunk import Chunk
@@ -126,9 +127,11 @@ class Decoder:
         fileName = "newPNGImage.png"
         newFile = open(fileName, 'wb')
         newFile.write(Decoder.PNG_SIGNATURE)
-        for chunkType, chunkData in self.chunks:
-            if chunkType in Decoder.CRITICAL_CHUNKS:
-                newFile.write(chunkType)
-                newFile.write(chunkData)
+        for chunk in self.chunks:
+            if chunk.type in Decoder.CRITICAL_CHUNKS:
+                newFile.write(struct.pack('>I',chunk.length))
+                newFile.write(chunk.type)
+                newFile.write(chunk.data)
+                newFile.write(struct.pack('>I',chunk.crc))
         newFile.close()
 
