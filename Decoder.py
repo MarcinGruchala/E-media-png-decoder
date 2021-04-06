@@ -40,7 +40,7 @@ class Decoder:
 
     def readIDAT(self):
         idatData = b''.join(chunk_data for chunk_type, chunk_data in self.chunks if chunk_type == b'IDAT')
-        return IDAT(idatData,self.getBytesPerPixel(),self.IHDR.width,self.IHDR.height)
+        return IDAT(idatData)
 
     def getBytesPerPixel(self):
         if(self.IHDR.colorType == 0): return 1
@@ -60,10 +60,6 @@ class Decoder:
         self.IHDR.printInformations()
         print(f'Bytes per pixel: {self.bytesPerPixel}')
 
-    def showIDAT(self):
-        self.IDAT.reconstructsPixelData()
-        self.IDAT.show()
-
     def showFFT(self):
         beforFFT = self.cvImg
         fft = np.fft.fft2(self.cvImg)
@@ -73,7 +69,7 @@ class Decoder:
         plt.subplot(221), plt.imshow(beforFFT, 'gray'), plt.title("Orgiinal Image in grayscale")
         plt.subplot(222), plt.imshow(np.log(1+np.abs(fft)), "gray"), plt.title("Spectrum")
         plt.subplot(223), plt.imshow(np.log(1+np.abs(fftCentered)), "gray"), plt.title("Centered Spectrum")
-        plt.subplot(224), plt.imshow(np.abs(invertFFt), "gray"), plt.title("Image after iverse FFT")
+        plt.subplot(224), plt.imshow(np.abs(invertFFt), "gray"), plt.title("Image after inverse FFT")
         plt.show()
 
     def showPixelData(self):
@@ -101,7 +97,6 @@ class Decoder:
 
     def reconstructedPixelData_c(self, r, c):
         return self.reconstructedPixelData[(r-1) * self.stride + c - self.bytesPerPixel] if r > 0 and c >= self.bytesPerPixel else 0
-
 
     def reconstructsPixelData(self):
         i = 0
