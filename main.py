@@ -1,5 +1,6 @@
 import sys
 import cv2
+from PIL import Image
 from Decoder import Decoder
 
 def main():
@@ -10,6 +11,7 @@ def main():
         cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
         png = Decoder(imageFile,cvImg)
         png.printMetedata()
+        png.showImg()
         if(sys.argv.__len__() == 3):
             if(sys.argv[2] == 'FFT'):
                 png.showFFT()

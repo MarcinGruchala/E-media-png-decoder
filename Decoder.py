@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
+from PIL import Image
 from IHDR import IHDR, struct
 from IDAT import IDAT
 from Chunk import Chunk
@@ -55,6 +56,9 @@ class Decoder:
 
     def printChunks(self):
         print([chunk.type for chunk in self.chunks])
+
+    def showImg(self):
+        Image.open(self.img).show()
 
     def printMetedata(self):
         print("Chunks: ")
