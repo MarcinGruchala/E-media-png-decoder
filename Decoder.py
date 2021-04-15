@@ -9,10 +9,10 @@ from IDAT import IDAT
 from Chunk import Chunk
 
 def read_chunk(file):
-    chunkLength, chunkType = struct.unpack('>I4s', file.read(8))
+    chunkLength, chunkType = struct.unpack('>I4s', file.read(Chunk.LENGTH_BYTES+Chunk.CHUNK_TYPE_BYTES))
     chunkData = file.read(chunkLength)
     checksum = zlib.crc32(chunkData, zlib.crc32(struct.pack('>4s', chunkType)))
-    chunkCrc, = struct.unpack('>I', file.read(4))
+    chunkCrc, = struct.unpack('>I', file.read(Chunk.CRC_BYTES))
     if chunkCrc != checksum:
         raise Exception('chunk checksum failed {} != {}'.format(chunkCrc,
             checksum))
@@ -60,7 +60,7 @@ class Decoder:
     def showImg(self):
         Image.open(self.img).show()
 
-    def printMetedata(self):
+    def showMetedata(self):
         print("Chunks: ")
         self.printChunks()
         print("\nImage atributes: ")

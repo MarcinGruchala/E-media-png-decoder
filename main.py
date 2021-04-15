@@ -4,13 +4,19 @@ from PIL import Image
 from Decoder import Decoder
 
 def main():
-    imageFile = open(sys.argv[1], 'rb')
+
+    try:
+        imageFile = open(sys.argv[1], 'rb')
+    except FileNotFoundError:
+        print("File not found")
+        return
+
     if(imageFile.read(len(Decoder.PNG_SIGNATURE)) != Decoder.PNG_SIGNATURE):
         print('Is is not a png file ')
     else:
         cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
         png = Decoder(imageFile,cvImg)
-        png.printMetedata()
+        png.showMetedata()
         png.showImg()
         if(sys.argv.__len__() == 3):
             if(sys.argv[2] == 'FFT'):
