@@ -18,6 +18,7 @@ def main():
         png = Decoder(imageFile,cvImg)
         png.showMetedata()
         png.showImg()
+        png.showPLTEPalette()
         if(sys.argv.__len__() == 3):
             if(sys.argv[2] == 'FFT'):
                 png.showFFT()

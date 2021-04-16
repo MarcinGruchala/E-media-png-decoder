@@ -6,10 +6,11 @@ import copy
 from PIL import Image
 from IHDR import IHDR, struct
 from IDAT import IDAT
+from PLTE import PLTE
 from Chunk import Chunk
 
 def read_chunk(file):
-    chunkLength, chunkType = struct.unpack('>I4s', file.read(Chunk.LENGTH_BYTES+Chunk.CHUNK_TYPE_BYTES))
+    chunkLength, chunkType = struct.unpack('>I4s', file.read(Chunk.LENGTH_BYTES+Chunk.TYPE_BYTES))
     chunkData = file.read(chunkLength)
     checksum = zlib.crc32(chunkData, zlib.crc32(struct.pack('>4s', chunkType)))
     chunkCrc, = struct.unpack('>I', file.read(Chunk.CRC_BYTES))
@@ -32,6 +33,7 @@ class Decoder:
             if chunk.type == b'IEND':
                 break
         self.IHDR = self.readIHDR()
+        self.PLTE = self.readPLTE()
         self.IDAT = self.readIDAT()
         self.bytesPerPixel = self.getBytesPerPixel()
         self.stride = self.IHDR.width * self.bytesPerPixel
@@ -41,6 +43,12 @@ class Decoder:
 
     def readIHDR(self):
         return IHDR(self.chunks[0].data)
+
+    def readPLTE(self):
+        for chunk in self.chunks:
+            if(chunk.type == b'PLTE'):
+                return PLTE(chunk.data)
+        return PLTE(b'')
 
     def readIDAT(self):
         idatData = b''.join(chunk.data for chunk in self.chunks if chunk.type == b'IDAT')
@@ -81,6 +89,12 @@ class Decoder:
 
     def showPixelData(self):
         plt.imshow(np.array(self.reconstructedPixelData).reshape((self.IHDR.height, self.IHDR.width, self.bytesPerPixel)))
+        plt.show()
+
+    def showPLTEPalette(self):
+        paletteGraf = np.array(self.PLTE.palette)
+        i = np.arange(256).reshape(16,16)
+        plt.imshow(paletteGraf[i])
         plt.show()
 
     def paethPredictor(self,a, b, c):
