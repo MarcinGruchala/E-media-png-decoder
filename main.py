@@ -18,7 +18,6 @@ def main():
         png = Decoder(imageFile,cvImg)
         png.showMetedata()
         png.showImg()
-        # png.IHDR.printCheckParameters()
         if(sys.argv.__len__() == 3):
             if(sys.argv[2] == 'FFT'):
                 png.showFFT()
@@ -26,6 +25,11 @@ def main():
                 png.showPixelData()
             if(sys.argv[2] == 'NI'):
                 png.createImageFromCriticalChunks()
+            if(sys.argv[2] == 'PLTE'):
+                if(png.PLTE.length == 0):
+                    print("That image don't have PLTE chunk")
+                else:
+                    png.showPLTEPalette()
 
 if __name__ == '__main__':
     main()
