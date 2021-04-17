@@ -8,6 +8,7 @@ from IHDR import IHDR, struct
 from IDAT import IDAT
 from PLTE import PLTE
 from Chunk import Chunk
+from IDATDecoder import IDATDecoder
 
 def read_chunk(file):
     chunkLength, chunkType = struct.unpack('>I4s', file.read(Chunk.LENGTH_BYTES+Chunk.TYPE_BYTES))
@@ -33,12 +34,11 @@ class Decoder:
             if chunk.type == b'IEND':
                 break
         self.IHDR = self.readIHDR()
-        self.PLTE = self.readPLTE()
-        self.IDAT = self.readIDAT()
         self.bytesPerPixel = self.getBytesPerPixel()
-        self.stride = self.IHDR.width * self.bytesPerPixel
-        self.reconstructedPixelData = []
-        self.reconstructsPixelData()
+        self.PLTE = self.readPLTE()
+        self.IDATs = self.readIDATs()
+        self.IDATDecoder = IDATDecoder(self.IDATs,self.IHDR.width, self.IHDR.height, self.bytesPerPixel)
+
 
 
     def readIHDR(self):
@@ -50,9 +50,8 @@ class Decoder:
                 return PLTE(chunk.length,chunk.type,chunk.data,chunk.crc)
         return PLTE(0,b'PLTE',b'',0)
 
-    def readIDAT(self):
-        idatData = b''.join(chunk.data for chunk in self.chunks if chunk.type == b'IDAT')
-        return IDAT(idatData)
+    def readIDATs(self):
+        return [IDAT(chunk) for chunk in self.chunks if chunk.type == b'IDAT']
 
     def getBytesPerPixel(self):
         if(self.IHDR.colorType == 0): return 1
@@ -88,7 +87,7 @@ class Decoder:
         plt.show()
 
     def showPixelData(self):
-        plt.imshow(np.array(self.reconstructedPixelData).reshape((self.IHDR.height, self.IHDR.width, self.bytesPerPixel)))
+        plt.imshow(np.array(self.IDATDecoder.reconstructedPixelData).reshape((self.IHDR.height, self.IHDR.width, self.bytesPerPixel)))
         plt.show()
 
     def showPLTEPalette(self):
@@ -96,50 +95,6 @@ class Decoder:
         i = np.arange(256).reshape(16,16)
         plt.imshow(paletteGraf[i])
         plt.show()
-
-    def paethPredictor(self,a, b, c):
-        p = a + b - c
-        pa = abs(p - a)
-        pb = abs(p - b)
-        pc = abs(p - c)
-        if pa <= pb and pa <= pc:
-            Pr = a
-        elif pb <= pc:
-            Pr = b
-        else:
-            Pr = c
-        return Pr
-
-    def reconstructedPixelData_a(self, r, c):
-        return self.reconstructedPixelData[r * self.stride + c - self.bytesPerPixel] if c >= self.bytesPerPixel else 0
-
-    def reconstructedPixelData_b(self, r, c):
-        return self.reconstructedPixelData[(r-1) * self.stride + c] if r > 0 else 0
-
-    def reconstructedPixelData_c(self, r, c):
-        return self.reconstructedPixelData[(r-1) * self.stride + c - self.bytesPerPixel] if r > 0 and c >= self.bytesPerPixel else 0
-
-    def reconstructsPixelData(self):
-        i = 0
-        for r in range(self.IHDR.height): # for each scanline
-            filter_type = self.IDAT.decompressedData[i] # first byte of scanline is filter type
-            i += 1
-            for c in range(self.stride): # for each byte in scanline
-                Filt_x = self.IDAT.decompressedData[i]
-                i += 1
-                if filter_type == 0: # None
-                    reconstructedPixelData_x = Filt_x
-                elif filter_type == 1: # Sub
-                    reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_a(r, c)
-                elif filter_type == 2: # Up
-                    reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_b(r, c)
-                elif filter_type == 3: # Average
-                    reconstructedPixelData_x = Filt_x + (self.reconstructedPixelData_a(r, c) + self.reconstructedPixelData_b(r, c)) // 2
-                elif filter_type == 4: # Paeth
-                    reconstructedPixelData_x = Filt_x + self.paethPredictor(self.reconstructedPixelData_a(r, c), self.reconstructedPixelData_b(r, c), self.reconstructedPixelData_c(r, c))
-                else:
-                    raise Exception('unknown filter type: ' + str(filter_type))
-                self.reconstructedPixelData.append(reconstructedPixelData_x & 0xff) # truncation to byte
 
     def createImageFromCriticalChunks(self):
         fileName = "newPNGImage.png"
