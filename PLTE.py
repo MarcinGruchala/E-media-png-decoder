@@ -1,11 +1,10 @@
-class PLTE:
-    def __init__(self, data):
-        self.data = data
+from Chunk import Chunk
+class PLTE(Chunk):
+    def __init__(self,length,chunkType,data,crc):
+        super().__init__(length,chunkType,data,crc)
         self.palette = []
         self.getPalette()
 
-    def printRowData(self):
-        print(self.data)
 
     def getPalette(self):
         for bytesIndex in range(0,len(self.data),3):

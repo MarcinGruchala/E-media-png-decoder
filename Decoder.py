@@ -47,8 +47,8 @@ class Decoder:
     def readPLTE(self):
         for chunk in self.chunks:
             if(chunk.type == b'PLTE'):
-                return PLTE(chunk.data)
-        return PLTE(b'')
+                return PLTE(chunk.length,chunk.type,chunk.data,chunk.crc)
+        return PLTE(0,b'PLTE',b'',0)
 
     def readIDAT(self):
         idatData = b''.join(chunk.data for chunk in self.chunks if chunk.type == b'IDAT')
