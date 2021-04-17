@@ -12,7 +12,7 @@ class Chunk:
         print(self.data)
 
     def printCheckParameters(self):
-        print(f'Chunk {self.type} ')
+        print(f'Chunk type: {self.type} ')
         print(f"Length: {self.length}")
         print(f'Crc: {self.crc}')
         print(f'Row data: {self.data}')

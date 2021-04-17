@@ -18,7 +18,7 @@ def main():
         png = Decoder(imageFile,cvImg)
         png.showMetedata()
         png.showImg()
-        png.IHDR.printCheckParameters()
+        # png.IHDR.printCheckParameters()
         if(sys.argv.__len__() == 3):
             if(sys.argv[2] == 'FFT'):
                 png.showFFT()

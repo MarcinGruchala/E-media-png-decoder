@@ -42,7 +42,7 @@ class Decoder:
 
 
     def readIHDR(self):
-        return IHDR(self.chunks[0].data)
+        return IHDR(self.chunks[0])
 
     def readPLTE(self):
         for chunk in self.chunks:
