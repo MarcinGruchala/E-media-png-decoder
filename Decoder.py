@@ -44,7 +44,6 @@ class Decoder:
                 break
         return chunks
 
-
     def readIHDR(self):
         return IHDR(self.chunks[0])
 
