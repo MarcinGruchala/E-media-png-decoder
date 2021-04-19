@@ -10,15 +10,6 @@ from PLTE import PLTE
 from Chunk import Chunk
 from IDATDecoder import IDATDecoder
 
-def read_chunk(file):
-    chunkLength, chunkType = struct.unpack('>I4s', file.read(Chunk.LENGTH_BYTES+Chunk.TYPE_BYTES))
-    chunkData = file.read(chunkLength)
-    checksum = zlib.crc32(chunkData, zlib.crc32(struct.pack('>4s', chunkType)))
-    chunkCrc, = struct.unpack('>I', file.read(Chunk.CRC_BYTES))
-    if chunkCrc != checksum:
-        raise Exception('chunk checksum failed {} != {}'.format(chunkCrc,
-            checksum))
-    return Chunk(chunkLength,chunkType,chunkData,chunkCrc)
 
 class Decoder:
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
@@ -27,18 +18,31 @@ class Decoder:
     def __init__(self, image,cvImg):
         self.img = image
         self.cvImg = cvImg
-        self.chunks = []
-        while True:
-            chunk = read_chunk(self.img)
-            self.chunks.append(chunk)
-            if chunk.type == b'IEND':
-                break
+        self.chunks = self.readChunks()
         self.IHDR = self.readIHDR()
         self.bytesPerPixel = self.getBytesPerPixel()
         self.PLTE = self.readPLTE()
         self.IDATs = self.readIDATs()
         self.IDATDecoder = IDATDecoder(self.IDATs,self.IHDR.width, self.IHDR.height, self.bytesPerPixel)
 
+    def read_chunk(self,file):
+        chunkLength, chunkType = struct.unpack('>I4s', file.read(Chunk.LENGTH_BYTES+Chunk.TYPE_BYTES))
+        chunkData = file.read(chunkLength)
+        checksum = zlib.crc32(chunkData, zlib.crc32(struct.pack('>4s', chunkType)))
+        chunkCrc, = struct.unpack('>I', file.read(Chunk.CRC_BYTES))
+        if chunkCrc != checksum:
+            raise Exception('chunk checksum failed {} != {}'.format(chunkCrc,
+                checksum))
+        return Chunk(chunkLength,chunkType,chunkData,chunkCrc)
+
+    def readChunks(self):
+        chunks = []
+        while True:
+            chunk = self.read_chunk(self.img)
+            chunks.append(chunk)
+            if chunk.type == b'IEND':
+                break
+        return chunks
 
 
     def readIHDR(self):
@@ -67,7 +71,7 @@ class Decoder:
     def showImg(self):
         Image.open(self.img).show()
 
-    def showMetedata(self):
+    def printImageInformations(self):
         print("Chunks: ")
         self.printChunks()
         print("\nImage atributes: ")

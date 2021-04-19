@@ -16,7 +16,7 @@ def main():
     else:
         cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
         png = Decoder(imageFile,cvImg)
-        png.showMetedata()
+        png.printImageInformations()
         png.showImg()
         if(sys.argv.__len__() == 3):
             if(sys.argv[2] == 'FFT'):
@@ -27,7 +27,7 @@ def main():
                 png.createImageFromCriticalChunks()
             if(sys.argv[2] == 'PLTE'):
                 if(png.PLTE.length == 0):
-                    print("That image don't have PLTE chunk")
+                    print("\nThat image don't have PLTE chunk")
                 else:
                     png.showPLTEPalette()
 
