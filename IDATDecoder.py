@@ -34,23 +34,23 @@ class IDATDecoder():
 
     def reconstructsPixelData(self):
         i = 0
-        for r in range(self.height): # for each scanline
-            filter_type = self.decompressedData[i] # first byte of scanline is filter type
+        for r in range(self.height):
+            filter_type = self.decompressedData[i]
             i += 1
-            for c in range(self.stride): # for each byte in scanline
+            for c in range(self.stride):
                 Filt_x = self.decompressedData[i]
                 i += 1
-                if filter_type == 0: # None
+                if filter_type == 0:
                     reconstructedPixelData_x = Filt_x
-                elif filter_type == 1: # Sub
+                elif filter_type == 1:
                     reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_a(r, c)
-                elif filter_type == 2: # Up
+                elif filter_type == 2:
                     reconstructedPixelData_x = Filt_x + self.reconstructedPixelData_b(r, c)
-                elif filter_type == 3: # Average
+                elif filter_type == 3:
                     reconstructedPixelData_x = Filt_x + (self.reconstructedPixelData_a(r, c) + self.reconstructedPixelData_b(r, c)) // 2
-                elif filter_type == 4: # Paeth
+                elif filter_type == 4:
                     reconstructedPixelData_x = Filt_x + self.paethPredictor(self.reconstructedPixelData_a(r, c), self.reconstructedPixelData_b(r, c), self.reconstructedPixelData_c(r, c))
                 else:
                     raise Exception('unknown filter type: ' + str(filter_type))
-                self.reconstructedPixelData.append(reconstructedPixelData_x & 0xff) # truncation to byte
+                self.reconstructedPixelData.append(reconstructedPixelData_x & 0xff)
 

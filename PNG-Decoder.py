@@ -1,6 +1,5 @@
 import sys
 import cv2
-from PIL import Image
 from Decoder import Decoder
 
 def printHelp():
@@ -48,4 +47,3 @@ def menu():
 
 if __name__ == '__main__':
     menu()
-
