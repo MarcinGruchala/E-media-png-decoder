@@ -1,8 +1,8 @@
 import zlib
-import matplotlib.pyplot as plt
-import numpy as np
-class IDAT:
-    def __init__(self, idatData):
-        self.decompressedData = zlib.decompress(idatData)
+from Chunk import Chunk
+class IDAT(Chunk):
+    def __init__(self, chunk):
+        super().__init__(chunk.length, chunk.type,chunk.data,chunk.crc)
+
 
 
