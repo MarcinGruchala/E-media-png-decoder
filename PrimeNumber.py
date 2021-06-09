@@ -1,9 +1,15 @@
 import random
 
-class Key:
+class PrimeNumber:
     def __init__(self):
          pass
 
+    def generate(self):
+        while True:
+            number = random.randrange(10000,900000)
+            if self.isPrime(number):
+                return number
+        
     def isPrime(self,n):
         if n!=int(n):
             return False

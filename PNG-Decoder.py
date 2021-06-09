@@ -1,4 +1,4 @@
-from Key import Key
+from PrimeNumber import PrimeNumber
 import sys
 import cv2
 from Decoder import Decoder
@@ -31,7 +31,7 @@ def menu():
                 png = Decoder(imageFile,cvImg)
                 png.printImageInformations()
                 png.showImg()
-                key = Key()
+                primeNumber = PrimeNumber()
                 if(sys.argv.__len__() == 3):
                     if(sys.argv[2] == '-fft'):
                         png.showFFT()
@@ -45,7 +45,7 @@ def menu():
                         else:
                             png.showPLTEPalette()
                     elif(sys.argv[2] == '-k'):
-                        print(key.isPrime(31))
+                        print(primeNumber.generate())
                     else:
                         print("Wrong flag")
 
