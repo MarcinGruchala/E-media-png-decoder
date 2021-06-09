@@ -46,9 +46,8 @@ def menu():
                         else:
                             png.showPLTEPalette()
                     elif(sys.argv[2] == '-k'):
-                        print(f"Key p: {key.p}")
-                        print(f"Key q: {key.q}")
-                        print(f"Key e: {key.e}")
+                        print(f"Public Key : {key.publicKey}")
+                        print(f"Private Key: {key.privateKey}")
                     else:
                         print("Wrong flag")
 
