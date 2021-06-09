@@ -1,3 +1,4 @@
+from Key import Key
 import sys
 import cv2
 from Decoder import Decoder
@@ -30,6 +31,7 @@ def menu():
                 png = Decoder(imageFile,cvImg)
                 png.printImageInformations()
                 png.showImg()
+                key = Key()
                 if(sys.argv.__len__() == 3):
                     if(sys.argv[2] == '-fft'):
                         png.showFFT()
@@ -42,6 +44,8 @@ def menu():
                             print("\nThat image doesn't have PLTE chunk")
                         else:
                             png.showPLTEPalette()
+                    elif(sys.argv[2] == '-k'):
+                        print(key.isPrime(31))
                     else:
                         print("Wrong flag")
 
