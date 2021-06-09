@@ -3,10 +3,10 @@ import random
 class PrimeNumber:
     def __init__(self):
          pass
-
+    
     def generate(self):
         while True:
-            number = random.randrange(10000,900000)
+            number = random.randrange(2**(1024-1),2**1024-1)
             if self.isPrime(number):
                 return number
         
