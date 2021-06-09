@@ -1,12 +1,12 @@
 from PrimeNumber import PrimeNumber
 
 
-from PrimeNumber import PrimeNumber
-
 class Key:
     def __init__(self):
         self.size = 1024
-        primeNumber = PrimeNumber()
-        self.p = primeNumber.generate()
-        self.q = primeNumber.generate()
-        self.n = self.p *self.q
+        self.primeNumber = PrimeNumber()
+        self.p = self.primeNumber.generate()
+        self.q = self.primeNumber.generate()
+        self.totient = (self.p-1)*(self.q-1)
+        self.e = self.totient-1
+    
