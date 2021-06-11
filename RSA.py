@@ -1,4 +1,3 @@
-#from _typeshed import StrOrBytesPath
 from Key import Key
 
 class RSA():

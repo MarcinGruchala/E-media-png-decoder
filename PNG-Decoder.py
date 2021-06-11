@@ -2,7 +2,7 @@ from Key import Key
 from PrimeNumber import PrimeNumber
 import sys
 import cv2
-from Decoder import Decoder
+from Png import Png
 
 def printHelp():
     print("usage: python main.py [file name] [-flag]")
@@ -25,11 +25,11 @@ def menu():
                 print("File not found")
                 return
 
-            if(imageFile.read(len(Decoder.PNG_SIGNATURE)) != Decoder.PNG_SIGNATURE):
+            if(imageFile.read(len(Png.PNG_SIGNATURE)) != Png.PNG_SIGNATURE):
                 print('Is is not a png file ')
             else:
                 cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
-                png = Decoder(imageFile,cvImg)
+                png = Png(imageFile,cvImg)
                 png.printImageInformations()
                 png.showImg()
                 key = Key()

@@ -13,7 +13,7 @@ from IDATDecoder import IDATDecoder
 from RSA import RSA
 
 
-class Decoder:
+class Png:
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
     CRITICAL_CHUNKS = [b'IHDR',b'PLTE',b'IDAT',b'IEND']
 
