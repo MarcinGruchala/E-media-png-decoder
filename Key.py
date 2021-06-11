@@ -3,7 +3,7 @@ from PrimeNumber import PrimeNumber
 
 class Key:
     def __init__(self):
-        self.size = 1024
+        self.size = 32
         self.primeNumber = PrimeNumber()
         self.p = self.primeNumber.generate()
         self.q = self.primeNumber.generate()

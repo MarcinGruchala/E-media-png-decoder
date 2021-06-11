@@ -1,3 +1,4 @@
+from EncoderDecoder import EncoderDecoder
 from Key import Key
 from PrimeNumber import PrimeNumber
 import sys
@@ -30,12 +31,14 @@ def menu():
             else:
                 cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
                 png = Png(imageFile,cvImg)
+                encoder_decoder = EncoderDecoder()
                 png.printImageInformations()
-                png.showImg()
                 key = Key()
                 if(sys.argv.__len__() == 3):
                     if(sys.argv[2] == '-fft'):
                         png.showFFT()
+                    elif(sys.argv[2] == 'show'):
+                        png.showImg()
                     elif(sys.argv[2] == '-id'):
                         png.showPixelData()
                     elif(sys.argv[2] == '-ni'):
@@ -45,8 +48,10 @@ def menu():
                             print("\nThat image doesn't have PLTE chunk")
                         else:
                             png.showPLTEPalette()
-                    elif(sys.argv[2] == '-RSAen'):
-                       png.createEncryptedFile()
+                    elif(sys.argv[2] == '-en'):
+                       encoder_decoder.encryptFile(png)
+                    elif(sys.argv[2] == '-de'):
+                       pass
                     else:
                         print("Wrong flag")
 
