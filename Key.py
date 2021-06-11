@@ -11,8 +11,8 @@ class Key:
         self.totient = (self.p-1)*(self.q-1)
         self.e = self.totient-1
         self.d = self.find_d()
-        self.publicKey = (self.e,self.n)
-        self.privateKey = (self.d, self.n)
+        self.public = (self.e,self.n)
+        self.private = (self.d, self.n)
 
     def find_d(self):
         u1, u2, u3 = 1, 0, self.e

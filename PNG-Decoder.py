@@ -45,9 +45,8 @@ def menu():
                             print("\nThat image doesn't have PLTE chunk")
                         else:
                             png.showPLTEPalette()
-                    elif(sys.argv[2] == '-k'):
-                        print(f"Public Key : {key.publicKey}")
-                        print(f"Private Key: {key.privateKey}")
+                    elif(sys.argv[2] == '-RSAen'):
+                       png.createEncryptedFile()
                     else:
                         print("Wrong flag")
 

@@ -1,3 +1,4 @@
+from RSA import RSA
 import zlib
 import cv2
 import numpy as np
@@ -9,6 +10,7 @@ from IDAT import IDAT
 from PLTE import PLTE
 from Chunk import Chunk
 from IDATDecoder import IDATDecoder
+from RSA import RSA
 
 
 class Decoder:
@@ -110,4 +112,27 @@ class Decoder:
                 newFile.write(chunk.data)
                 newFile.write(struct.pack('>I',chunk.crc))
         newFile.close()
+
+    def createEncryptedFile(self):
+        rsa = RSA()
+        fileName = "encrypted.png"
+        newFile = open(fileName, 'wb')
+        newFile.write(Decoder.PNG_SIGNATURE)
+        for chunk in self.chunks:
+            if chunk.type == b'IDAT':
+                idatData = bytes(rsa.EcbEncrypt(chunk.data))
+                newData = zlib.compress(idatData,9)
+                newCrc= zlib.crc32(newData, zlib.crc32(struct.pack('>4s', b'IDAT')))
+                newLength = len(newData)
+                newFile.write(struct.pack('>I',newLength))
+                newFile.write(chunk.type)
+                newFile.write(newData)
+                newFile.write(struct.pack('>I',newCrc))
+            else:
+                newFile.write(struct.pack('>I',chunk.length))
+                newFile.write(chunk.type)
+                newFile.write(chunk.data)
+                newFile.write(struct.pack('>I',chunk.crc))
+        newFile.close()
+        
 
