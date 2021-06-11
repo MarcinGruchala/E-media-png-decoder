@@ -1,16 +1,16 @@
 import random
 
 class PrimeNumber:
-    def __init__(self):
-         pass
     
-    def generate(self):
+    @staticmethod
+    def generate():
         while True:
-            number = random.randrange(2**(1024-1),2**1024-1)
-            if self.isPrime(number):
+            number = random.randrange(2**(32-1),2**32-1)
+            if PrimeNumber.isPrime(number):
                 return number
-        
-    def isPrime(self,n):
+
+    @staticmethod   
+    def isPrime(n):
         if n!=int(n):
             return False
         n=int(n)

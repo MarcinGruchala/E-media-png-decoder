@@ -10,7 +10,6 @@ from PLTE import PLTE
 from Chunk import Chunk
 from IDATDecoder import IDATDecoder
 
-
 class Png:
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
     CRITICAL_CHUNKS = [b'IHDR',b'PLTE',b'IDAT',b'IEND']
@@ -102,35 +101,11 @@ class Png:
     def createImageFromCriticalChunks(self):
         fileName = "newPNGImage.png"
         newFile = open(fileName, 'wb')
-        newFile.write(Decoder.PNG_SIGNATURE)
+        newFile.write(Png.PNG_SIGNATURE)
         for chunk in self.chunks:
-            if chunk.type in Decoder.CRITICAL_CHUNKS:
+            if chunk.type in Png.CRITICAL_CHUNKS:
                 newFile.write(struct.pack('>I',chunk.length))
                 newFile.write(chunk.type)
                 newFile.write(chunk.data)
                 newFile.write(struct.pack('>I',chunk.crc))
         newFile.close()
-
-    # def createEncryptedFile(self):
-    #     rsa = RSA()
-    #     fileName = "encrypted.png"
-    #     newFile = open(fileName, 'wb')
-    #     newFile.write(Decoder.PNG_SIGNATURE)
-    #     for chunk in self.chunks:
-    #         if chunk.type == b'IDAT':
-    #             idatData = bytes(rsa.EcbEncrypt(chunk.data))
-    #             newData = zlib.compress(idatData,9)
-    #             newCrc= zlib.crc32(newData, zlib.crc32(struct.pack('>4s', b'IDAT')))
-    #             newLength = len(newData)
-    #             newFile.write(struct.pack('>I',newLength))
-    #             newFile.write(chunk.type)
-    #             newFile.write(newData)
-    #             newFile.write(struct.pack('>I',newCrc))
-    #         else:
-    #             newFile.write(struct.pack('>I',chunk.length))
-    #             newFile.write(chunk.type)
-    #             newFile.write(chunk.data)
-    #             newFile.write(struct.pack('>I',chunk.crc))
-    #     newFile.close()
-        
-

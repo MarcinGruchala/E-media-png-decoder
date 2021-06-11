@@ -12,9 +12,10 @@ class EncoderDecoder():
         fileName = "encrypted.png"
         newFile = open(fileName, 'wb')
         newFile.write(Png.PNG_SIGNATURE)
+        all_IDAT_Data = Rsa.EcbEncrypt(pngImage.IDATDecoder.IDATsData , self.key.public)
         for chunk in pngImage.chunks:
             if chunk.type == b'IDAT':
-                idatData = bytes(Rsa.EcbEncrypt(chunk.data, self.key.public))
+                idatData = bytes(all_IDAT_Data)
                 newData = zlib.compress(idatData,9)
                 newCrc= zlib.crc32(newData, zlib.crc32(struct.pack('>4s', b'IDAT')))
                 newLength = len(newData)
