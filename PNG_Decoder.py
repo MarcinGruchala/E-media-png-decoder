@@ -23,18 +23,18 @@ def flag_action(png,flag):
     '''
     if sys.argv.__len__() == 3:
         if flag == '-fft':
-            png.showFFT()
+            png.show_fft()
         elif flag == '-show':
-             png.showImg()
+             png.show_img()
         elif flag == '-id':
-            png.showPixelData()
+            png.show_pixel_data()
         elif flag == '-ni':
-            png.createImageFromCriticalChunks()
+            png.create_image_from_critical_chunks()
         elif flag == '-p':
             if png.PLTE.length == 0:
                 print("\nThat image doesn't have PLTE chunk")
             else:
-                png.showPLTEPalette()
+                png.show_PLTE_palette()
         elif flag == '-RSA':
             encoder_decoder = EncoderDecoder(png)
             encoder_decoder.encryptFile(png)
@@ -63,7 +63,7 @@ def menu():
             else:
                 cv_img = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
                 png = Png(image_file,cv_img)
-                png.printImageInformations()
+                png.print_image_informations()
 
                 if sys.argv.__len__() == 3:
                     flag_action(png,sys.argv[2])
