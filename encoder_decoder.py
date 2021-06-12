@@ -1,6 +1,6 @@
-from Key import Key
+from key import Key
 import zlib
-from RSA import Rsa
+from rsa import Rsa
 import struct
 from Png import Png
 

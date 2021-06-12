@@ -1,7 +1,7 @@
 '''
 File with Key class
 '''
-from PrimeNumber import PrimeNumber
+from prime_number import PrimeNumber
 class Key:
     '''
     Class reprezents RSA key

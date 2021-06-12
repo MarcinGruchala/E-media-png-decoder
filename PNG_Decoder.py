@@ -3,7 +3,7 @@ File with app menu app logic
 '''
 import sys
 import cv2
-from EncoderDecoder import EncoderDecoder
+from encoder_decoder import EncoderDecoder
 from Png import Png
 
 def print_help():
