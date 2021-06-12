@@ -1,43 +1,57 @@
+'''
+File with PrimeNumber class
+'''
 import random
 
 class PrimeNumber:
-    
+    '''
+    Class generates prime numbers and checks if the number is a prime number
+    '''
     @staticmethod
-    def generate():
+    def generate(number_binary_size):
+        '''
+        Method generates a prime number
+
+        '''
         while True:
-            number = random.randrange(2**(32-1),2**32-1)
-            if PrimeNumber.isPrime(number):
+            number = random.randrange(2**(number_binary_size-1),2**number_binary_size-1)
+            if PrimeNumber.is_prime(number):
                 return number
 
-    @staticmethod   
-    def isPrime(n):
-        if n!=int(n):
+    @staticmethod
+    def is_prime(number):
+        '''
+        Method checks if the number is prime using the Miller-Rabin primality test.
+        '''
+        small_not_prime_numbers = [0,1,4,6,8,9]
+        small_prime_numbers = [2,3,5,7]
+
+        if number!=int(number):
             return False
-        n=int(n)
-        if n==0 or n==1 or n==4 or n==6 or n==8 or n==9:
+        number=int(number)
+        if number in small_not_prime_numbers:
             return False
-    
-        if n==2 or n==3 or n==5 or n==7:
+
+        if number in small_prime_numbers:
             return True
         s = 0
-        d = n-1
+        d = number-1
         while d%2==0:
             d>>=1
             s+=1
-        assert(2**s * d == n-1)
-    
+        assert(2**s * d == number-1)
+
         def trial_composite(a):
-            if pow(a, d, n) == 1:
+            if pow(a, d, number) == 1:
                 return False
             for i in range(s):
-                if pow(a, 2**i * d, n) == n-1:
+                if pow(a, 2**i * d, number) == number-1:
                     return False
-            return True  
-    
-        for i in range(8):
-            a = random.randrange(2, n)
+            return True
+
+        for _ in range(8):
+            a = random.randrange(2, number)
             if trial_composite(a):
                 return False
-    
-        return True  
 
+        return True
