@@ -21,26 +21,25 @@ def flag_action(png,flag):
     '''
     Function handles flag action
     '''
-    if sys.argv.__len__() == 3:
-        if flag == '-fft':
-            png.show_fft()
-        elif flag == '-show':
-             png.show_img()
-        elif flag == '-id':
-            png.show_pixel_data()
-        elif flag == '-ni':
-            png.create_image_from_critical_chunks()
-        elif flag == '-p':
-            if png.PLTE.length == 0:
-                print("\nThat image doesn't have PLTE chunk")
-            else:
-                png.show_PLTE_palette()
-        elif flag == '-RSA':
-            encoder_decoder = EncoderDecoder(png)
-            encoder_decoder.encryptFile(png)
-            encoder_decoder.decryptFile(png)
+    if flag == '-fft':
+        png.show_fft()
+    elif flag == '-show':
+        png.show_img()
+    elif flag == '-id':
+        png.show_pixel_data()
+    elif flag == '-ni':
+        png.create_image_from_critical_chunks()
+    elif flag == '-p':
+        if png.PLTE.length == 0:
+            print("\nThat image doesn't have PLTE chunk")
         else:
-            print("Wrong flag")
+            png.show_PLTE_palette()
+    elif flag == '-RSA':
+        encoder_decoder = EncoderDecoder(png, int(sys.argv[3]))
+        encoder_decoder.encrypt_file(png)
+        encoder_decoder.decrypt_file(png)
+    else:
+        print("Wrong flag")
 
 def menu():
     '''
@@ -65,7 +64,7 @@ def menu():
                 png = Png(image_file,cv_img)
                 png.print_image_informations()
 
-                if sys.argv.__len__() == 3:
+                if sys.argv.__len__() > 2:
                     flag_action(png,sys.argv[2])
 
 if __name__ == '__main__':
