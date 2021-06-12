@@ -31,7 +31,6 @@ def menu():
             else:
                 cvImg = cv2.imread(sys.argv[1],cv2.IMREAD_GRAYSCALE)
                 png = Png(imageFile,cvImg)
-                encoder_decoder = EncoderDecoder()
                 png.printImageInformations()
                 key = Key()
                 if(sys.argv.__len__() == 3):
@@ -48,10 +47,10 @@ def menu():
                             print("\nThat image doesn't have PLTE chunk")
                         else:
                             png.showPLTEPalette()
-                    elif(sys.argv[2] == '-en'):
-                       encoder_decoder.encryptFile(png)
-                    elif(sys.argv[2] == '-de'):
-                       pass
+                    elif(sys.argv[2] == '-RSA'):
+                        encoder_decoder = EncoderDecoder(png)
+                        encoder_decoder.encryptFile(png)
+                        encoder_decoder.decryptFile(png)                    
                     else:
                         print("Wrong flag")
 
