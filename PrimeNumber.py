@@ -8,13 +8,13 @@ class PrimeNumber:
     Class generates prime numbers and checks if the number is a prime number
     '''
     @staticmethod
-    def generate(number_binary_size):
+    def generate(number_size_in_bytes):
         '''
         Method generates a prime number
 
         '''
         while True:
-            number = random.randrange(2**(number_binary_size-1),2**number_binary_size-1)
+            number = random.randrange(2**(number_size_in_bytes-1),2**number_size_in_bytes-1)
             if PrimeNumber.is_prime(number):
                 return number
 
