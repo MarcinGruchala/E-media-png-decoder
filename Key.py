@@ -1,38 +1,39 @@
 '''
 File with Key class
 '''
-import random
 from prime_number import PrimeNumber
 class Key:
     '''
-    Class reprezents RSA key
+    Class reprezents RSA key.
     '''
     def __init__(self,key_size_in_bytes):
         self.key_size_in_bytes = key_size_in_bytes
-        self.p = PrimeNumber.generate(key_size_in_bytes/2)
-        self.q = PrimeNumber.generate(key_size_in_bytes/2)
-        self.n = self.p * self.q
-        self.totient = (self.p-1)*(self.q-1)
-        self.e = self.find_e()
-        self.d = self.find_d()
-        self.public = (self.e,self.n)
-        self.private = (self.d, self.n)
+        self.prime_one = PrimeNumber.generate(key_size_in_bytes/2)
+        self.prime_two = PrimeNumber.generate(key_size_in_bytes/2)
+        self.key_modulus = self.prime_one * self.prime_two
+        self.totient = (self.prime_one-1)*(self.prime_two-1)
+        self.encryption_exponent = self.find_encryption_exponent()
+        self.decryption_exponent = self.find_decryption_exponent()
+        self.public = (self.encryption_exponent,self.key_modulus)
+        self.private = (self.decryption_exponent, self.key_modulus)
 
-    def find_e(self):
+    def find_encryption_exponent(self):
         '''
+        Method finds encryption exponent.
         '''
         if self.totient >65537:
             return 65537
-        e = self.totient-1
+        exponent = self.totient-1
         while True:
-            if PrimeNumber.is_prime(e):
-                return e
-            e = e-2
+            if PrimeNumber.is_prime(exponent):
+                return exponent
+            exponent = exponent-2
 
-    def find_d(self):
+    def find_decryption_exponent(self):
         '''
+        Method finds decryption exponent.
         '''
-        u1, u2, u3 = 1, 0, self.e
+        u1, u2, u3 = 1, 0, self.encryption_exponent
         v1, v2, v3 = 0, 1, self.totient
         while v3 != 0:
             q = u3 // v3
