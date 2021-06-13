@@ -9,23 +9,14 @@ class Key:
     '''
     def __init__(self,key_size_in_bytes):
         self.key_size_in_bytes = key_size_in_bytes
-        self.p, self.q = self.find_pq()
+        self.p = PrimeNumber.generate(key_size_in_bytes/2)
+        self.q = PrimeNumber.generate(key_size_in_bytes/2)
         self.n = self.p * self.q
         self.totient = (self.p-1)*(self.q-1)
         self.e = self.find_e()
         self.d = self.find_d()
         self.public = (self.e,self.n)
         self.private = (self.d, self.n)
-
-    def find_pq(self):
-        p_size = int(self.key_size_in_bytes/2) + random.randrange(int(self.key_size_in_bytes/100), int(self.key_size_in_bytes/10)) #to avoid same bit size p and q
-        q_size = self.key_size_in_bytes - p_size
-        p,q = 0, 0
-        while (p*q).bit_length() != self.key_size_in_bytes or p == q:
-            p = PrimeNumber.generate(p_size)
-            q = PrimeNumber.generate(q_size)
-        return p, q
-
 
     def find_e(self):
         '''
