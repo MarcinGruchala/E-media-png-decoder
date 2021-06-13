@@ -13,8 +13,8 @@ class EncoderDecoder():
     '''
     def __init__(self,png_image,key_size_in_bytes):
         self.key = Key(key_size_in_bytes)
-        self.encrypted_data = Rsa.ecb_encrypt(png_image.IDATDecoder.IDATsData , self.key.public)
-        self.decryptted_data = Rsa.ecb_decrypt(self.encrypted_data,self.key.private)
+        self.encrypted_data = Rsa.ecb_encrypt(png_image.IDATDecoder.decompressedData, self.key.public)
+        self.decryptted_data = Rsa.ecb_decrypt(self.encrypted_data, self.key.private)
 
     def encrypt_file(self,png_image):
         '''
