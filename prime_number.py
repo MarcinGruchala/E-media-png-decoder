@@ -1,20 +1,21 @@
 '''
-File with PrimeNumber class
+File with PrimeNumber class.
 '''
 import random
 
 class PrimeNumber:
     '''
-    Class generates prime numbers and checks if the number is a prime number
+    Class generates prime numbers and checks if the number is a prime number.
     '''
     @staticmethod
-    def generate(number_size_in_bytes):
+    def generate(number_size_in_bits):
         '''
-        Method generates a prime number
+        Method generates a prime number within given bits length.
+        For better performance method generates only odd numbers.
 
         '''
         while True:
-            number = random.randrange(2**(number_size_in_bytes-1),2**number_size_in_bytes-1)
+            number = random.randrange(2**(number_size_in_bits-1)+1,2**number_size_in_bits-1)
             if PrimeNumber.is_prime(number):
                 return number
 
@@ -22,6 +23,7 @@ class PrimeNumber:
     def is_prime(number):
         '''
         Method checks if the number is prime using the Miller-Rabin primality test.
+        If method returns true, the given number probably is a prime number.
         '''
         small_not_prime_numbers = [0,1,4,6,8,9]
         small_prime_numbers = [2,3,5,7]
