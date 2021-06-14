@@ -88,15 +88,15 @@ class Png:
         '''
         Method returns bytes per pixel
         '''
-        if self.IHDR.colorType == 0 :
+        if self.IHDR.color_type == 0 :
             return 1
-        if self.IHDR.colorType == 2 :
+        if self.IHDR.color_type == 2 :
             return 3
-        if self.IHDR.colorType == 3 :
+        if self.IHDR.color_type == 3 :
             return 1
-        if self.IHDR.colorType == 4 :
+        if self.IHDR.color_type == 4 :
             return 2
-        if self.IHDR.colorType == 6 :
+        if self.IHDR.color_type == 6 :
             return 4
         return -1
 
@@ -119,7 +119,7 @@ class Png:
         print("Chunks: ")
         self.print_chunks()
         print("\nImage atributes: ")
-        self.IHDR.printInformations()
+        self.IHDR.print_informations()
         print(f'Bytes per pixel: {self.bytes_per_pixel}')
 
     def show_fft(self):
