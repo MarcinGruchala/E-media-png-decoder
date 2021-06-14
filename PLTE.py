@@ -1,4 +1,4 @@
-from Chunk import Chunk
+from chunk import Chunk
 class PLTE(Chunk):
     def __init__(self,length,chunkType,data,crc):
         super().__init__(length,chunkType,data,crc)

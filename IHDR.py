@@ -1,5 +1,5 @@
 import struct
-from Chunk import Chunk
+from chunk import Chunk
 class IHDR(Chunk):
     def __init__(self, chunk):
         super().__init__(chunk.length, chunk.type,chunk.data,chunk.crc)

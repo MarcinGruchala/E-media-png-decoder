@@ -27,7 +27,7 @@ class Key:
         while True:
             if PrimeNumber.is_prime(exponent):
                 return exponent
-            exponent = exponent-2
+            exponent = exponent-1
 
     def find_decryption_exponent(self):
         '''

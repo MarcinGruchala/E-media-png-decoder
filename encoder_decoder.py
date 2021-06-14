@@ -5,7 +5,7 @@ import zlib
 import struct
 from key import Key
 from rsa import Rsa
-from Png import Png
+from png import Png
 
 class EncoderDecoder():
     '''

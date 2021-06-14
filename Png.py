@@ -7,11 +7,11 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-from IHDR import IHDR, struct
-from IDAT import IDAT
-from PLTE import PLTE
-from Chunk import Chunk
-from IDATDecoder import IDATDecoder
+from ihdr import IHDR, struct
+from idat import IDAT
+from plte import PLTE
+from chunk import Chunk
+from idat_decoder import IDATDecoder
 
 class Png:
     '''
