@@ -7,11 +7,11 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-from IHDR import IHDR, struct
-from IDAT import IDAT
-from PLTE import PLTE
-from Chunk import Chunk
-from IDATDecoder import IDATDecoder
+from ihdr import IHDR, struct
+from idat import IDAT
+from plte import PLTE
+from chunk import Chunk
+from idat_decoder import IDATDecoder
 
 class Png:
     '''
@@ -88,15 +88,15 @@ class Png:
         '''
         Method returns bytes per pixel
         '''
-        if self.IHDR.colorType == 0 :
+        if self.IHDR.color_type == 0 :
             return 1
-        if self.IHDR.colorType == 2 :
+        if self.IHDR.color_type == 2 :
             return 3
-        if self.IHDR.colorType == 3 :
+        if self.IHDR.color_type == 3 :
             return 1
-        if self.IHDR.colorType == 4 :
+        if self.IHDR.color_type == 4 :
             return 2
-        if self.IHDR.colorType == 6 :
+        if self.IHDR.color_type == 6 :
             return 4
         return -1
 
@@ -119,7 +119,7 @@ class Png:
         print("Chunks: ")
         self.print_chunks()
         print("\nImage atributes: ")
-        self.IHDR.printInformations()
+        self.IHDR.print_informations()
         print(f'Bytes per pixel: {self.bytes_per_pixel}')
 
     def show_fft(self):
@@ -149,7 +149,7 @@ class Png:
         '''
         Method shows pixes data from IDAT chunks
         '''
-        plt.imshow(np.array(self.IDATDecoder.reconstructedPixelData).reshape((self.IHDR.height, self.IHDR.width, self.bytes_per_pixel)))
+        plt.imshow(np.array(self.IDATDecoder.reconstructed_pixel_data).reshape((self.IHDR.height, self.IHDR.width, self.bytes_per_pixel)))
         plt.show()
 
     def show_PLTE_palette(self):
