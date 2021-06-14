@@ -149,7 +149,7 @@ class Png:
         '''
         Method shows pixes data from IDAT chunks
         '''
-        plt.imshow(np.array(self.IDATDecoder.reconstructedPixelData).reshape((self.IHDR.height, self.IHDR.width, self.bytes_per_pixel)))
+        plt.imshow(np.array(self.IDATDecoder.reconstructed_pixel_data).reshape((self.IHDR.height, self.IHDR.width, self.bytes_per_pixel)))
         plt.show()
 
     def show_PLTE_palette(self):
