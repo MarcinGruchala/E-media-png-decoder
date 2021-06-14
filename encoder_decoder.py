@@ -24,7 +24,12 @@ class EncoderDecoder():
         new_file = open(file_name, 'wb')
         new_file.write(Png.PNG_SIGNATURE)
         for chunk in png_image.chunks:
-            if chunk.type == b'IDAT':
+            if chunk.type != b'IDAT':
+                new_file.write(struct.pack('>I',chunk.length))
+                new_file.write(chunk.type)
+                new_file.write(chunk.data)
+                new_file.write(struct.pack('>I',chunk.crc))
+            else:
                 idat_data = bytes(self.encrypted_data)
                 new_data = zlib.compress(idat_data,9)
                 new_crc= zlib.crc32(new_data, zlib.crc32(struct.pack('>4s', b'IDAT')))
@@ -33,11 +38,6 @@ class EncoderDecoder():
                 new_file.write(chunk.type)
                 new_file.write(new_data)
                 new_file.write(struct.pack('>I',new_crc))
-            else:
-                new_file.write(struct.pack('>I',chunk.length))
-                new_file.write(chunk.type)
-                new_file.write(chunk.data)
-                new_file.write(struct.pack('>I',chunk.crc))
         new_file.close()
 
     def decrypt_file(self, png_image):
@@ -48,7 +48,12 @@ class EncoderDecoder():
         new_file = open(file_name, 'wb')
         new_file.write(Png.PNG_SIGNATURE)
         for chunk in png_image.chunks:
-            if chunk.type == b'IDAT':
+            if chunk.type != b'IDAT':
+                new_file.write(struct.pack('>I',chunk.length))
+                new_file.write(chunk.type)
+                new_file.write(chunk.data)
+                new_file.write(struct.pack('>I',chunk.crc))
+            else:
                 idat_data = bytes(self.decryptted_data)
                 new_data = zlib.compress(idat_data,9)
                 new_crc= zlib.crc32(new_data, zlib.crc32(struct.pack('>4s', b'IDAT')))
@@ -57,9 +62,4 @@ class EncoderDecoder():
                 new_file.write(chunk.type)
                 new_file.write(new_data)
                 new_file.write(struct.pack('>I',new_crc))
-            else:
-                new_file.write(struct.pack('>I',chunk.length))
-                new_file.write(chunk.type)
-                new_file.write(chunk.data)
-                new_file.write(struct.pack('>I',chunk.crc))
         new_file.close()
