@@ -1,6 +1,6 @@
 # E-media-png-decoder
 
-PNG-decoder application for E-media course
+PNG-decoder application for E-media course. The application can read all critical PNG data chunks and uses the RSA algorithm to encode and decode IDAT chunks to encrypt an image.
 
 ## Bibliography
 
